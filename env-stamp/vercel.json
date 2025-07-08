@@ -1,0 +1,33 @@
+{
+  "buildCommand": "npm run build:production",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "installCommand": "npm ci",
+  "devCommand": "npm run dev",
+  "env": {
+    "VITE_APP_ENV": "prod",
+    "VITE_APP_NAME": "Env Stamp",
+    "VITE_DEBUG_MODE": "false",
+    "VITE_ANALYTICS_ENABLED": "true",
+    "VITE_SUPABASE_ENABLED": "true"
+  },
+  "build": {
+    "env": {
+      "VITE_APP_ENV": "prod",
+      "VITE_APP_NAME": "Env Stamp", 
+      "VITE_DEBUG_MODE": "false",
+      "VITE_ANALYTICS_ENABLED": "true",
+      "VITE_SUPABASE_ENABLED": "true"
+    }
+  },
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "develop": true
+    }
+  },
+  "github": {
+    "autoDeployments": true,
+    "enabled": true
+  }
+}

@@ -19,31 +19,66 @@ A React-based journal application that dynamically adapts its appearance, featur
 # Clone and install
 cd env-stamp
 npm install
+cp .env.example .env.local  # Set up local environment
 
 # Run in different environments
-npm run dev          # Uses .env.local (local environment)
-npm run dev:dev      # Uses .env.development (dev environment)
-npm run dev:test     # Uses .env.test (test environment)
-npm run build        # Uses .env.production (prod environment)
+npm run dev               # Uses .env.local (local environment)
+npm run dev:development   # Development mode
+npm run dev:test         # Test mode
+npm run build:production # Production build
 ```
 
-## Environment Configuration
+## 🚀 Git Workflow & Deployments
 
-Each environment has its own configuration file:
+This project uses **GitFlow with automated CI/CD** for multi-environment deployments:
 
-- `.env.local` - Local development
-- `.env.development` - Development environment
-- `.env.test` - Test environment
-- `.env.production` - Production environment
+### Branch Strategy
+```
+main (prod)           ←── Production deployments (manual approval)
+├── develop (test)    ←── Test environment (auto-deploy)
+├── feature/xyz (dev) ←── Dev environment (PR previews)
+└── hotfix/abc        ←── Emergency production fixes
+```
+
+### Deployment Environments
+- **Development**: PR previews to `develop` branch → `dev` environment
+- **Test**: Merges to `develop` branch → `test` environment  
+- **Production**: Merges to `main` branch → `prod` environment
+
+### Environment Configuration
+
+Environment variables are managed through deployment platform (Vercel/Netlify), not committed files:
 
 ### Environment Variables
 
+| Variable | Local | Dev | Test | Prod |
+|----------|-------|-----|------|------|
+| `VITE_APP_ENV` | `local` | `dev` | `test` | `prod` |
+| `VITE_APP_NAME` | `Env Stamp` | `Env Stamp` | `Env Stamp` | `Env Stamp` |
+| `VITE_DEBUG_MODE` | `true` | `true` | `true` | `false` |
+| `VITE_ANALYTICS_ENABLED` | `false` | `false` | `false` | `true` |
+| `VITE_SUPABASE_ENABLED` | `false` | `false` | `false` | `true` |
+
+## 🔧 Development Workflow
+
+### Working with Features
 ```bash
-VITE_APP_ENV=local|dev|test|prod
-VITE_APP_NAME=Env Stamp
-VITE_DEBUG_MODE=true|false
-VITE_ANALYTICS_ENABLED=true|false
-VITE_SUPABASE_ENABLED=true|false
+# 1. Create feature branch from develop
+git checkout develop
+git checkout -b feature/your-feature-name
+
+# 2. Develop and test locally
+npm run dev  # Runs in local mode
+npm run dev:development  # Test dev environment behavior
+
+# 3. Create PR to develop branch
+# → Triggers dev environment preview deployment
+
+# 4. After review, merge to develop
+# → Automatically deploys to test environment
+
+# 5. For production release, merge develop to main
+# → Deploys to production environment
 ```
 
 ## Project Structure
@@ -148,17 +183,59 @@ npm run lint         # Run ESLint (if configured)
 - **Storage**: localStorage (with abstraction for future database)
 - **Environment**: Vite environment variables
 
-## Deployment
+## 🚀 Deployment Setup
 
-### Vercel/Netlify
-1. Connect repository to your platform
-2. Set environment variables in platform settings
-3. Deploy different branches to different environments
+### GitHub Repository Setup
+1. **Create GitHub repository** and push this code
+2. **Set up branch protection** for `main` and `develop`:
+   ```bash
+   # Protect main branch (production)
+   - Require pull request reviews
+   - Require status checks to pass
+   - Restrict pushes to main branch
+   
+   # Protect develop branch (test environment) 
+   - Require pull request reviews
+   - Require CI checks to pass
+   ```
 
-### Manual Deployment
+### Vercel Deployment Setup
+1. **Connect repository** to Vercel
+2. **Configure environments** in Vercel dashboard:
+   - **Production**: Connected to `main` branch
+   - **Preview**: Connected to `develop` branch and PRs
+3. **Set environment variables** per environment in Vercel:
+   ```bash
+   Production Environment:
+   VITE_APP_ENV=prod
+   VITE_DEBUG_MODE=false
+   VITE_ANALYTICS_ENABLED=true
+   VITE_SUPABASE_ENABLED=true
+   
+   Preview Environment:
+   VITE_APP_ENV=test  # or dev for PR previews
+   VITE_DEBUG_MODE=true
+   VITE_ANALYTICS_ENABLED=false
+   VITE_SUPABASE_ENABLED=false
+   ```
+4. **Add Vercel secrets** to GitHub repository:
+   - `VERCEL_TOKEN` - Vercel deployment token
+   - `VERCEL_ORG_ID` - Organization ID  
+   - `VERCEL_PROJECT_ID` - Project ID
+
+### GitHub Actions Secrets Required
 ```bash
-# Build for production
-npm run build
+VERCEL_TOKEN          # Vercel CLI token
+VERCEL_ORG_ID         # Vercel organization ID
+VERCEL_PROJECT_ID     # Vercel project ID
+```
+
+### Manual Deployment (if needed)
+```bash
+# Build for specific environment
+npm run build:production
+npm run build:test
+npm run build:development
 
 # Deploy dist/ folder to your hosting provider
 ```

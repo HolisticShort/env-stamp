@@ -5,9 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:local": "vite --mode local",
+    "dev:development": "vite --mode development", 
+    "dev:test": "vite --mode test",
     "build": "tsc -b && vite build",
+    "build:development": "tsc -b && vite build --mode development",
+    "build:test": "tsc -b && vite build --mode test",
+    "build:production": "tsc -b && vite build --mode production",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "react": "^19.1.0",
