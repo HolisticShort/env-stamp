@@ -20,27 +20,18 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
-          cache-dependency-path: env-stamp/package-lock.json
           
       - name: Install dependencies
-        run: |
-          cd env-stamp
-          npm ci
+        run: npm ci
           
       - name: Type check
-        run: |
-          cd env-stamp
-          npm run type-check
+        run: npm run type-check
           
       - name: Lint
-        run: |
-          cd env-stamp
-          npm run lint
+        run: npm run lint
           
       - name: Build for development
-        run: |
-          cd env-stamp
-          npm run build:development
+        run: npm run build:development
         env:
           VITE_APP_ENV: dev
           VITE_APP_NAME: Env Stamp
@@ -50,12 +41,12 @@ jobs:
           
       - name: Deploy to Vercel (Preview)
         uses: amondnet/vercel-action@v25
+        if: github.event_name == 'pull_request'
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: env-stamp
           scope: ${{ secrets.VERCEL_ORG_ID }}
           github-comment: true
         env:
