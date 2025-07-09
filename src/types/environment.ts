@@ -12,6 +12,9 @@ export interface EnvironmentConfig {
     debugPanel: boolean;
     analytics: boolean;
     supabase: boolean;
+    dashboard: boolean;
+    performanceMetrics: boolean;
+    advancedMetrics: boolean;
   };
 }
 
@@ -26,4 +29,7 @@ export interface FeatureFlags {
   debugPanel: boolean;
   analytics: boolean;
   supabase: boolean;
+  dashboard: boolean;
+  performanceMetrics: boolean;
+  advancedMetrics: boolean;
 }

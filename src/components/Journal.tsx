@@ -19,7 +19,7 @@ export function Journal() {
     try {
       const loadedEntries = StorageService.getAllEntries();
       setEntries(loadedEntries);
-    } catch (err) {
+    } catch {
       setError('Failed to load journal entries');
     }
   };
@@ -51,7 +51,7 @@ export function Journal() {
       StorageService.saveEntry(entry);
       setEntries(prev => [entry, ...prev]);
       setNewEntry('');
-    } catch (err) {
+    } catch {
       setError('Failed to save journal entry');
     } finally {
       setIsSubmitting(false);
@@ -62,7 +62,7 @@ export function Journal() {
     try {
       StorageService.deleteEntry(id);
       setEntries(prev => prev.filter(entry => entry.id !== id));
-    } catch (err) {
+    } catch {
       setError('Failed to delete entry');
     }
   };
