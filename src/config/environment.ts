@@ -13,6 +13,9 @@ const environmentConfigs: Record<Environment, EnvironmentConfig> = {
       debugPanel: true,
       analytics: false,
       supabase: false,
+      dashboard: true,
+      performanceMetrics: true,
+      advancedMetrics: false,
     },
   },
   dev: {
@@ -27,6 +30,9 @@ const environmentConfigs: Record<Environment, EnvironmentConfig> = {
       debugPanel: true,
       analytics: false,
       supabase: false,
+      dashboard: true,
+      performanceMetrics: true,
+      advancedMetrics: true,
     },
   },
   test: {
@@ -41,6 +47,9 @@ const environmentConfigs: Record<Environment, EnvironmentConfig> = {
       debugPanel: true,
       analytics: false,
       supabase: false,
+      dashboard: true,
+      performanceMetrics: true,
+      advancedMetrics: true,
     },
   },
   prod: {
@@ -55,6 +64,9 @@ const environmentConfigs: Record<Environment, EnvironmentConfig> = {
       debugPanel: false,
       analytics: true,
       supabase: true,
+      dashboard: true,
+      performanceMetrics: true,
+      advancedMetrics: false,
     },
   },
 };

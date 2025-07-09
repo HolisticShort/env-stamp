@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { StorageService } from '../services/storage';
+import { MetricsService } from '../services/metrics';
 import { getCurrentEnvironment, getEnvironmentConfig, getFeatureFlags } from '../config/environment';
 
 export function DebugPanel() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [storageInfo, setStorageInfo] = useState(StorageService.getStorageInfo());
+  const [metricsInfo, setMetricsInfo] = useState(MetricsService.getMetricsSummary());
 
   const environment = getCurrentEnvironment();
   const config = getEnvironmentConfig();
@@ -12,11 +14,13 @@ export function DebugPanel() {
 
   const refreshStorageInfo = () => {
     setStorageInfo(StorageService.getStorageInfo());
+    setMetricsInfo(MetricsService.getMetricsSummary());
   };
 
   const clearAllData = () => {
-    if (window.confirm('Are you sure you want to clear all journal entries? This cannot be undone.')) {
+    if (window.confirm('Are you sure you want to clear all journal entries and metrics? This cannot be undone.')) {
       StorageService.clearAllEntries();
+      MetricsService.clearMetrics();
       refreshStorageInfo();
     }
   };
@@ -63,6 +67,8 @@ export function DebugPanel() {
               <h4 className="font-semibold text-sm mb-2">Feature Flags</h4>
               <div className="text-xs space-y-1">
                 <div>Debug Panel: <span className={features.debugPanel ? 'text-green-400' : 'text-red-400'}>{features.debugPanel ? '✓' : '✗'}</span></div>
+                <div>Dashboard: <span className={features.dashboard ? 'text-green-400' : 'text-red-400'}>{features.dashboard ? '✓' : '✗'}</span></div>
+                <div>Performance Metrics: <span className={features.performanceMetrics ? 'text-green-400' : 'text-red-400'}>{features.performanceMetrics ? '✓' : '✗'}</span></div>
                 <div>Analytics: <span className={features.analytics ? 'text-green-400' : 'text-red-400'}>{features.analytics ? '✓' : '✗'}</span></div>
                 <div>Supabase: <span className={features.supabase ? 'text-green-400' : 'text-red-400'}>{features.supabase ? '✓' : '✗'}</span></div>
               </div>
@@ -84,6 +90,18 @@ export function DebugPanel() {
                 <div>Available: <span className={storageInfo.isAvailable ? 'text-green-400' : 'text-red-400'}>{storageInfo.isAvailable ? '✓' : '✗'}</span></div>
               </div>
             </div>
+
+            {features.performanceMetrics && (
+              <div>
+                <h4 className="font-semibold text-sm mb-2">Performance Metrics</h4>
+                <div className="text-xs space-y-1">
+                  <div>Total Entries: <span className="font-mono text-yellow-400">{metricsInfo.totalEntries}</span></div>
+                  <div>Avg Load Time: <span className="font-mono text-yellow-400">{metricsInfo.avgPageLoadTime.toFixed(0)}ms</span></div>
+                  <div>Avg Memory: <span className="font-mono text-yellow-400">{(metricsInfo.avgMemoryUsage / 1024 / 1024).toFixed(1)}MB</span></div>
+                  <div>Total Errors: <span className="font-mono text-yellow-400">{metricsInfo.totalErrors}</span></div>
+                </div>
+              </div>
+            )}
 
             <div>
               <h4 className="font-semibold text-sm mb-2">Actions</h4>
