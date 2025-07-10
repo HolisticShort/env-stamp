@@ -4,14 +4,35 @@ import { Journal } from './components/Journal';
 import { Dashboard } from './components/Dashboard';
 import { DebugPanel } from './components/DebugPanel';
 import { LearningHub } from './components/LearningHub';
+import { Sidebar } from './components/navigation/Sidebar';
+import { QuickAccessToolbar } from './components/navigation/QuickAccessToolbar';
+import { Breadcrumbs } from './components/navigation/Breadcrumbs';
+import { OnboardingTour } from './components/navigation/OnboardingTour';
+import { NavigationService } from './services/navigation';
+import { ServicesView } from './components/views/ServicesView';
+import { MetricsView } from './components/views/MetricsView';
+import { DebugView } from './components/views/DebugView';
+import { TutorialListView } from './components/views/TutorialListView';
+import { EnvironmentComparisonView } from './components/views/EnvironmentComparisonView';
+import { AnalyticsView } from './components/views/AnalyticsView';
+import { DatabaseView } from './components/views/DatabaseView';
 import { getFeatureFlags } from './config/environment';
 import { MetricsService } from './services/metrics';
 
-type View = 'journal' | 'dashboard' | 'learning';
+type View = 'journal' | 'dashboard' | 'learning-hub' | 'services' | 'metrics' | 'debug-panel' | 'tutorials' | 'environment-comparison' | 'analytics' | 'database';
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('journal');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const features = getFeatureFlags();
+
+  useEffect(() => {
+    const preferences = NavigationService.getUserPreferences();
+    if (!preferences.completedOnboarding) {
+      setShowOnboarding(true);
+    }
+  }, []);
 
   useEffect(() => {
     // Initialize metrics collection if enabled
@@ -38,12 +59,31 @@ function App() {
     }
   }, [features.performanceMetrics]);
 
+  const handleNavigate = (_path: string, viewName: string) => {
+    setCurrentView(viewName as View);
+    setSidebarOpen(false);
+  };
+
   const renderView = () => {
     switch (currentView) {
       case 'dashboard':
         return <Dashboard />;
-      case 'learning':
+      case 'learning-hub':
         return <LearningHub />;
+      case 'services':
+        return <ServicesView />;
+      case 'metrics':
+        return <MetricsView />;
+      case 'debug-panel':
+        return <DebugView />;
+      case 'tutorials':
+        return <TutorialListView />;
+      case 'environment-comparison':
+        return <EnvironmentComparisonView />;
+      case 'analytics':
+        return <AnalyticsView />;
+      case 'database':
+        return <DatabaseView />;
       case 'journal':
       default:
         return (
@@ -69,51 +109,66 @@ function App() {
     <div className="min-h-screen bg-gray-50">
       <EnvironmentBanner />
       
-      {/* Navigation */}
-      <nav className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex space-x-8">
-            <button
-              onClick={() => setCurrentView('journal')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                currentView === 'journal'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              Journal
-            </button>
-            
-            {features.dashboard && (
+      <div className="flex">
+        {/* Sidebar Navigation */}
+        <Sidebar 
+          currentView={currentView}
+          onNavigate={handleNavigate}
+          isOpen={sidebarOpen}
+          onToggle={() => setSidebarOpen(!sidebarOpen)}
+        />
+        
+        {/* Main Content */}
+        <div className="flex-1 lg:ml-0">
+          {/* Mobile menu button */}
+          <div className="lg:hidden bg-white border-b border-gray-200 px-4 py-3">
+            <div className="flex items-center justify-between">
               <button
-                onClick={() => setCurrentView('dashboard')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  currentView === 'dashboard'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg"
+                aria-label="Open navigation"
               >
-                Dashboard
+                ☰
               </button>
-            )}
-            
-            <button
-              onClick={() => setCurrentView('learning')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                currentView === 'learning'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              Learning Hub
-            </button>
+              
+              {/* Mobile breadcrumbs */}
+              <div className="flex-1 mx-4">
+                <Breadcrumbs 
+                  currentView={currentView}
+                  onNavigate={handleNavigate}
+                />
+              </div>
+            </div>
+          </div>
+          
+          {/* Desktop breadcrumbs */}
+          <div className="hidden lg:block bg-white border-b border-gray-200 px-6 py-3">
+            <Breadcrumbs 
+              currentView={currentView}
+              onNavigate={handleNavigate}
+            />
+          </div>
+          
+          {/* Page content */}
+          <div className="relative">
+            {renderView()}
           </div>
         </div>
-      </nav>
+      </div>
 
-      {renderView()}
+      {/* Quick Access Toolbar */}
+      <QuickAccessToolbar 
+        currentView={currentView}
+        onNavigate={handleNavigate}
+      />
 
-      {features.debugPanel && <DebugPanel />}
+      {/* Legacy Debug Panel (only show as floating panel if not in debug view) */}
+      {features.debugPanel && currentView !== 'debug-panel' && <DebugPanel />}
+      
+      {/* Onboarding Tour */}
+      {showOnboarding && (
+        <OnboardingTour onComplete={() => setShowOnboarding(false)} />
+      )}
     </div>
   );
 }

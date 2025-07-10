@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { MetricsService } from '../services/metrics';
-import type { MetricsSummary, PerformanceMetrics } from '../services/metrics';
-import { getCurrentEnvironment, getFeatureFlags } from '../config/environment';
-import type { Environment } from '../types/environment';
-import { RunningServices } from './RunningServices';
+import { MetricsService } from '../../services/metrics';
+import type { MetricsSummary, PerformanceMetrics } from '../../services/metrics';
+import { getCurrentEnvironment, getFeatureFlags } from '../../config/environment';
+import type { Environment } from '../../types/environment';
 
-export function Dashboard() {
+export function MetricsView() {
   const [selectedEnvironment, setSelectedEnvironment] = useState<Environment | 'all'>('all');
   const [metrics, setMetrics] = useState<PerformanceMetrics[]>([]);
   const [summary, setSummary] = useState<MetricsSummary | null>(null);
@@ -67,12 +66,15 @@ export function Dashboard() {
     }
   };
 
-  if (!features.dashboard) {
+  if (!features.performanceMetrics) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Dashboard Not Available</h2>
-          <p className="text-gray-600">The dashboard feature is not enabled in this environment.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Performance Metrics Not Available</h2>
+          <p className="text-gray-600">Performance metrics are not enabled in this environment.</p>
+          <p className="text-sm text-gray-500 mt-2">
+            This feature is available in: development, test, and production environments.
+          </p>
         </div>
       </div>
     );
@@ -82,9 +84,9 @@ export function Dashboard() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Performance Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Performance Metrics</h1>
           <p className="text-gray-600">
-            Monitor application performance across different environments
+            Detailed performance analytics and monitoring across environments
           </p>
         </div>
 
@@ -118,18 +120,11 @@ export function Dashboard() {
             </div>
             <div className="text-right">
               <p className="text-sm text-gray-600">Data Collection Status</p>
-              <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                features.performanceMetrics ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-              }`}>
-                {features.performanceMetrics ? 'Active' : 'Inactive'}
+              <span className="inline-block px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                Active
               </span>
             </div>
           </div>
-        </div>
-
-        {/* Running Services */}
-        <div className="mb-8">
-          <RunningServices />
         </div>
 
         {isLoading ? (
@@ -211,7 +206,7 @@ export function Dashboard() {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {metrics.slice(0, 20).map((metric) => (
+                      {metrics.slice(0, 50).map((metric) => (
                         <tr key={metric.id}>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             {new Date(metric.timestamp).toLocaleString()}
