@@ -8,7 +8,8 @@ import { getFeatureFlags } from './config/environment';
 import { MetricsService } from './services/metrics';
 
 type View = 'journal' | 'dashboard' | 'learning';
-
+ // 1234
+ 
 function App() {
   const [currentView, setCurrentView] = useState<View>('journal');
   const features = getFeatureFlags();
