@@ -3,6 +3,7 @@ import { MetricsService } from '../services/metrics';
 import type { MetricsSummary, PerformanceMetrics } from '../services/metrics';
 import { getCurrentEnvironment, getFeatureFlags } from '../config/environment';
 import type { Environment } from '../types/environment';
+import { RunningServices } from './RunningServices';
 
 export function Dashboard() {
   const [selectedEnvironment, setSelectedEnvironment] = useState<Environment | 'all'>('all');
@@ -124,6 +125,11 @@ export function Dashboard() {
               </span>
             </div>
           </div>
+        </div>
+
+        {/* Running Services */}
+        <div className="mb-8">
+          <RunningServices />
         </div>
 
         {isLoading ? (
