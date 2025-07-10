@@ -50,10 +50,10 @@ function App() {
           <main className="py-6 sm:py-8">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
               <header className="text-center mb-8 sm:mb-12">
-                <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
+                <h1 className="text-2xl sm:text-3xl font-bold text-blue-900 mb-2">
                   Env Stamp Journal
                 </h1>
-                <p className="text-slate-600">
+                <p className="text-blue-700">
                   A simple journal app that adapts to your environment
                 </p>
               </header>
@@ -66,11 +66,11 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-blue-50">
       <EnvironmentBanner />
       
       {/* Navigation */}
-      <nav className="bg-white border-b border-slate-200 shadow-sm">
+      <nav className="bg-white border-b border-blue-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-6 sm:space-x-8 overflow-x-auto">
             {features.dashboard && (
@@ -79,7 +79,7 @@ function App() {
                 className={`py-4 px-2 border-b-2 font-medium text-sm whitespace-nowrap min-w-0 transition-colors ${
                   currentView === 'dashboard'
                     ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                    : 'border-transparent text-blue-600 hover:text-blue-700 hover:border-blue-300'
                 }`}
               >
                 Dashboard
@@ -91,7 +91,7 @@ function App() {
               className={`py-4 px-2 border-b-2 font-medium text-sm whitespace-nowrap min-w-0 transition-colors ${
                 currentView === 'learning'
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                  : 'border-transparent text-blue-600 hover:text-blue-700 hover:border-blue-300'
               }`}
             >
               Learning Hub
@@ -102,7 +102,7 @@ function App() {
               className={`py-4 px-2 border-b-2 font-medium text-sm whitespace-nowrap min-w-0 transition-colors ${
                 currentView === 'journal'
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                  : 'border-transparent text-blue-600 hover:text-blue-700 hover:border-blue-300'
               }`}
             >
               Journal
@@ -119,4 +119,4 @@ function App() {
 }
 
 export default App
-// Learning system test - Thu Jul 10 05:35:53 EDT 2025 adding this part of the note to test deploys, this is the extra part in new comment
+// Learning system test - Thu Jul 10 05:35:53 EDT 2025 adding
